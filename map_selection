@@ -1,0 +1,37 @@
+import numpy as np
+import glob
+
+filenames = glob.glob("./saliencies/rseam/TC_corrected/saliencies*")
+
+X = []
+for i,f in enumerate(filenames):
+    x = np.load(f)
+    X.append(x)
+
+X = np.array(X)
+
+M = np.mean(X,axis=0)
+print(M.shape)
+
+diffs = X- M[None,:,:,:]
+
+diffs = diffs*diffs
+print(diffs.shape)
+
+diffs = np.sum(diffs,axis=3)
+diffs = np.sum(diffs,axis=2)
+print(diffs.shape)
+Y = []
+for i in range(313):
+    d = diffs[:,i]
+    amin = np.argmin(d)
+    print(amin)
+    x = X[amin,i,:,:]
+    print(x.shape)
+    Y.append(x)
+
+Y = np.array(Y)
+print(Y.shape)
+np.save("/data/mialab/users/nlewis/R-SEAM/AAAI/map_selections/TC_corrected/rseam/finalized_maps",Y)
+
+    
